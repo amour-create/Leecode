@@ -144,8 +144,51 @@ public class Solution {
 
     //备忘录方法减免背包问题重复计算
     
+    public int maxV = Integer.MIN_VALUE;
+    private int[] items = {2,2,4,6,3};
+    private int[] value = {3,4,8,9,6};
+    private int n_v = 5;
+    private int w_v = 9;
+    public void f_v(int i, int cw, int cv){
+        if(cw == w_v || i == n_v){
+            if(cv > maxV) maxV = cv;
+        }
+        f_v(i+1, cw, cv);
+        if(cw + weight[i] <= w){
+            f_v(i+1, cw = weight[i], cv+value[i]);
+        }
+    }
 
-
+    public static int knapsack3(int[] weight, int[] value, int n, int w){
+        int[][] states = new int[n][w+1];
+        for (int i = 0; i < n; ++i){
+            for(int j = 0; j < w + 1; ++j){
+                states[i][j] = -1;
+            }
+        }
+        states[0][0] = 0;
+        if (weight[0] <= w) {
+            states[0][weight[0]] = value[0];
+        }
+        for (int i = 1; i < n; ++i) {
+            for (int j = 0; j <= w; ++j){
+                if (states[i-1][j] >= 0) states[i][j] = states[i-1][j];
+            }
+            for(int j = 0; j <= w-weight[i]; ++j){
+                if (states[i-1][j] >= 0){
+                    int v = states[i-1][j] + value[i];
+                    if (v > states[i][j+weight[i]]) {
+                        states[i][j+weight[i]] = v;
+                    }
+                }
+            }
+        }
+        int maxvalue = -1;
+        for (int j = 0; j <= w; ++j) {
+            if(states[n-1][j] > maxvalue) maxvalue = states[n-1][j];
+        }
+        return maxvalue;
+    }
 
 
 
